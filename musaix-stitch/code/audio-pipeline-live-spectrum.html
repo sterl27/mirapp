@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Audio Pipeline | MUSAIX ENGINE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Geist:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #333;
+        }
+        .cyan-glow-text {
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+        }
+        .cyan-glow-border:focus-within {
+            border-color: #00f2ff;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #333;
+            height: 4px;
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            background: #00f2ff;
+            border-radius: 50%;
+            margin-top: -6px;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.8);
+        }
+        @keyframes led-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes ambient-shimmer {
+            0% { filter: brightness(1) drop-shadow(0 0 5px rgba(0,242,255,0.3)); }
+            50% { filter: brightness(1.3) drop-shadow(0 0 12px rgba(0,242,255,0.6)); }
+            100% { filter: brightness(1) drop-shadow(0 0 5px rgba(0,242,255,0.3)); }
+        }
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes spectrum-bounce {
+            0%, 100% { height: 30%; }
+            25% { height: 80%; }
+            50% { height: 50%; }
+            75% { height: 100%; }
+        }
+        .led-segment {
+            width: 4px;
+            height: 12px;
+            background: #333;
+            margin-right: 1px;
+            border-radius: 1px;
+        }
+        .led-active {
+            background: linear-gradient(to top, #00f2ff, #39ff14);
+            animation: spectrum-bounce 1.5s infinite ease-in-out;
+            box-shadow: 0 0 8px rgba(0, 242, 255, 0.6);
+        }
+        .node-icon-btn:active {
+            transform: scale(0.9);
+        }
+        .pop-in {
+            animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#380038",
+                        "on-primary-fixed": "#002022",
+                        "on-primary-fixed-variant": "#004f54",
+                        "tertiary": "#fff4f9",
+                        "on-tertiary-fixed-variant": "#810081",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary": "#00363a",
+                        "on-tertiary-container": "#ab00aa",
+                        "on-background": "#e5e2e1",
+                        "background": "#131313",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container-highest": "#353534",
+                        "surface-bright": "#3a3939",
+                        "on-surface": "#e5e2e1",
+                        "inverse-on-surface": "#313030",
+                        "surface": "#131313",
+                        "tertiary-container": "#ffcbf4",
+                        "on-secondary": "#053900",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#0f6d00",
+                        "inverse-primary": "#00696f",
+                        "secondary": "#d7ffc5",
+                        "surface-container": "#201f1f",
+                        "primary-container": "#00f2ff",
+                        "outline-variant": "#3a494b",
+                        "primary": "#e1fdff",
+                        "surface-dim": "#131313",
+                        "primary-fixed": "#74f5ff",
+                        "secondary-fixed": "#79ff5b",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#2ae500",
+                        "on-surface-variant": "#b9cacb",
+                        "surface-tint": "#00dbe7",
+                        "outline": "#849495",
+                        "primary-fixed-dim": "#00dbe7",
+                        "secondary-container": "#2ff801",
+                        "surface-container-low": "#1c1b1b",
+                        "tertiary-fixed-dim": "#ffabf3",
+                        "on-tertiary": "#5b005b",
+                        "on-primary-container": "#006a71",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary-fixed": "#ffd7f5",
+                        "on-secondary-fixed": "#022100",
+                        "on-secondary-fixed-variant": "#095300",
+                        "surface-variant": "#353534"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-desktop": "40px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "800"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-container/30">
+<!-- Top AppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="menu">menu</span>
+<h1 class="font-headline-md text-headline-md font-bold tracking-widest text-primary-fixed-dim">MUSAIX ENGINE</h1>
+</div>
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="help_outline">help_outline</span>
+</header>
+<main class="pt-20 pb-32 px-margin-mobile">
+<!-- Header Section -->
+<section class="mb-8">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-1">Audio Pipeline</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Pipeline Orchestration / Node v2.4</p>
+</section>
+<!-- Signal Processing Section -->
+<section class="mb-8 glass-panel p-6 rounded-xl overflow-hidden relative">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h3 class="font-label-sm text-label-sm text-primary-fixed-dim mb-1">SIGNAL PROCESSING</h3>
+<p class="text-xs text-on-surface-variant">Live Spectral Analysis</p>
+</div>
+<div class="text-right">
+<span class="font-mono text-xl text-primary-fixed-dim cyan-glow-text" id="processing-pct">74%</span>
+</div>
+</div>
+<!-- LED Meter -->
+<div class="flex items-end h-16 gap-1" id="led-container">
+<!-- Segments generated by JS -->
+</div>
+<!-- Gradient Progress Bar -->
+<div class="mt-6 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary-container to-secondary-container w-[74%] shadow-[0_0_10px_rgba(0,242,255,0.5)]"></div>
+</div>
+</section>
+<!-- Workflow Nodes -->
+<section class="space-y-4 mb-8">
+<div class="font-label-sm text-label-sm text-on-surface-variant mb-2">WORKFLOW SEQUENCE</div>
+<!-- Node: MFCC Extraction -->
+<div class="glass-panel p-4 rounded-lg flex items-center justify-between border-l-4 border-l-primary-container active:bg-primary-container/5 transition-colors">
+<div class="flex items-center gap-4">
+<div class="node-icon-btn w-10 h-10 rounded bg-primary-container/10 flex items-center justify-center border border-primary-container/30 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="waves">waves</span>
+</div>
+<div>
+<div class="text-sm font-semibold text-on-surface">MFCC Extraction</div>
+<div class="text-[10px] text-on-surface-variant">Fast Fourier Transform Engine</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed-dim text-sm pop-in" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Node: Beat Analysis -->
+<div class="glass-panel p-4 rounded-lg flex items-center justify-between border-l-4 border-l-primary-container active:bg-primary-container/5 transition-colors">
+<div class="flex items-center gap-4">
+<div class="node-icon-btn w-10 h-10 rounded bg-primary-container/10 flex items-center justify-center border border-primary-container/30 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="reorder">reorder</span>
+</div>
+<div>
+<div class="text-sm font-semibold text-on-surface">Beat Analysis</div>
+<div class="text-[10px] text-on-surface-variant">BPM &amp; Transient Detection</div>
+</div>
+</div>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse delay-75"></div>
+</div>
+</div>
+<!-- Node: Hugging Face Inference -->
+<div class="glass-panel p-4 rounded-lg flex items-center justify-between opacity-50">
+<div class="flex items-center gap-4">
+<div class="node-icon-btn w-10 h-10 rounded bg-surface-container flex items-center justify-center border border-outline-variant transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="psychology">psychology</span>
+</div>
+<div>
+<div class="text-sm font-semibold text-on-surface">Hugging Face Inference</div>
+<div class="text-[10px] text-on-surface-variant">Neural Timbre Synthesis</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="pending">pending</span>
+</div>
+<!-- Node: ElevenLabs Voice FX -->
+<div class="glass-panel p-4 rounded-lg flex items-center justify-between opacity-50">
+<div class="flex items-center gap-4">
+<div class="node-icon-btn w-10 h-10 rounded bg-surface-container flex items-center justify-center border border-outline-variant transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="record_voice_over">record_voice_over</span>
+</div>
+<div>
+<div class="text-sm font-semibold text-on-surface">ElevenLabs Voice FX</div>
+<div class="text-[10px] text-on-surface-variant">Generative Vocal Layering</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="lock">lock</span>
+</div>
+</section>
+<!-- Controls Section -->
+<section class="glass-panel p-6 rounded-xl border border-primary-container/20">
+<h3 class="font-label-sm text-label-sm text-primary-fixed-dim mb-6">PARAMETER TUNING</h3>
+<!-- Slider: MFCC Sensitivity -->
+<div class="mb-8">
+<div class="flex justify-between mb-2">
+<label class="font-label-sm text-label-sm text-on-surface">MFCC Sensitivity</label>
+<span class="text-xs text-primary-fixed-dim font-mono">0.82</span>
+</div>
+<input class="w-full" max="100" min="0" type="range" value="82"/>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant">
+<span>COARSE</span>
+<span>GRANULAR</span>
+</div>
+</div>
+<!-- Slider: Inference Weight -->
+<div class="mb-4">
+<div class="flex justify-between mb-2">
+<label class="font-label-sm text-label-sm text-on-surface">Inference Weight</label>
+<span class="text-xs text-primary-fixed-dim font-mono">0.45</span>
+</div>
+<input class="w-full" max="100" min="0" type="range" value="45"/>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant">
+<span>SUBTLE</span>
+<span>DOMINANT</span>
+</div>
+</div>
+</section>
+<!-- Visual Context -->
+<div class="mt-8 rounded-xl overflow-hidden h-40 relative group">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10"></div>
+<img alt="High-tech music production background" class="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV_DXZKunZ5mNsl8xMp8jQWeQ43FaIxdM6VOb91cGBdii6UbvMocWv-yr_x5ayhBocmn6Kzxo4eDwCN4DTvVjP-tnPBxAuv6gV8s-ZitvWHEHa8w7AoZJrojHLJwNI61W1fE_LdnkGWL6ludcGICg0-L30Jm8nIrtOW72n_6Jt1YfF1exiDyvegcaQQCGfj4WStwkc0rtT88piQO6fZiNkmgU-BIk22PXrUBo9HF8SjkqF6UutzNeqlNJxmqKZHx5ZWhK0t2b6kw"/>
+<div class="absolute bottom-4 left-4 z-20">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-fixed-dim animate-pulse"></div>
+<span class="text-[10px] font-bold tracking-widest text-secondary-fixed-dim uppercase">Engine Active</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe h-20 bg-surface-container-lowest border-t border-outline-variant">
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Overview</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+<span class="font-label-sm text-label-sm">Engine</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container/10 text-primary-fixed-dim rounded-xl px-3 py-1 ring-1 ring-primary-container/30 shadow-[0_0_15px_rgba(0,242,255,0.2)] scale-110 transition-all active:scale-100">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-label-sm text-label-sm">Pipeline</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="sync_alt">sync_alt</span>
+<span class="font-label-sm text-label-sm">External</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="construction">construction</span>
+<span class="font-label-sm text-label-sm">Build</span>
+</button>
+</nav>
+<script>
+        // LED Meter Generation and Initial Styling
+        const ledContainer = document.getElementById('led-container');
+        const segmentCount = 48;
+        const segments = [];
+
+        for (let i = 0; i < segmentCount; i++) {
+            const seg = document.createElement('div');
+            seg.className = 'led-segment';
+            
+            // Apply randomized animation properties to create asynchronous effect
+            const duration = 0.8 + Math.random() * 1.2;
+            const delay = Math.random() * 2;
+            
+            // Only light up some bars initially
+            if (i < 24 || Math.random() > 0.5) {
+                seg.classList.add('led-active');
+                seg.style.animationDuration = `${duration}s`;
+                seg.style.animationDelay = `${delay}s`;
+            } else {
+                seg.style.height = '12px';
+                seg.style.opacity = '0.3';
+            }
+            
+            ledContainer.appendChild(seg);
+            segments.push(seg);
+        }
+
+        // Simple percent counter simulation
+        const pctEl = document.getElementById('processing-pct');
+        let pct = 74;
+        setInterval(() => {
+            pct = Math.min(100, Math.max(0, pct + (Math.random() - 0.5) * 2));
+            pctEl.innerText = Math.floor(pct) + '%';
+        }, 500);
+
+        // Micro-interaction for nodes
+        document.querySelectorAll('.node-icon-btn').forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                btn.style.transform = 'scale(0.85)';
+            });
+            btn.addEventListener('touchend', () => {
+                btn.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.85)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

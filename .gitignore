@@ -1,0 +1,17 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+node_modules
+
+# Local credentials — never commit
+env.local
+.env
+.env.local
+musaix-stitch/code/config.js

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Musaix Engine - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500&amp;family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#2ae500",
+                        "on-surface-variant": "#b9cacb",
+                        "inverse-surface": "#e5e2e1",
+                        "tertiary": "#fff4f9",
+                        "on-tertiary-fixed": "#380038",
+                        "on-tertiary-container": "#ab00aa",
+                        "on-primary": "#00363a",
+                        "surface-container-low": "#1c1b1b",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-tertiary-fixed-variant": "#810081",
+                        "secondary": "#d7ffc5",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#5b005b",
+                        "surface-bright": "#3a3939",
+                        "surface-variant": "#353534",
+                        "on-primary-fixed": "#002022",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#353534",
+                        "on-secondary-fixed-variant": "#095300",
+                        "background": "#131313",
+                        "surface-container": "#201f1f",
+                        "primary-fixed-dim": "#00dbe7",
+                        "secondary-container": "#2ff801",
+                        "error": "#ffb4ab",
+                        "primary-container": "#00f2ff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#74f5ff",
+                        "outline": "#849495",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary-container": "#0f6d00",
+                        "secondary-fixed": "#79ff5b",
+                        "on-primary-container": "#006a71",
+                        "surface-container-high": "#2a2a2a",
+                        "surface": "#131313",
+                        "tertiary-fixed-dim": "#ffabf3",
+                        "on-secondary-fixed": "#022100",
+                        "tertiary-container": "#ffcbf4",
+                        "inverse-primary": "#00696f",
+                        "on-surface": "#e5e2e1",
+                        "on-background": "#e5e2e1",
+                        "on-secondary": "#053900",
+                        "surface-tint": "#00dbe7",
+                        "tertiary-fixed": "#ffd7f5",
+                        "surface-dim": "#131313",
+                        "primary": "#e1fdff",
+                        "outline-variant": "#3a494b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "margin-desktop": "40px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .glass-panel {
+            background: rgba(32, 31, 31, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid theme('colors.outline-variant');
+        }
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-24 md:pb-0 pt-16">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface border-b border-outline-variant fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-4">
+<button class="text-primary-fixed-dim dark:text-primary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold tracking-widest text-primary-fixed-dim dark:text-primary-fixed-dim">MUSAIX ENGINE</h1>
+</div>
+<div>
+<button class="text-primary-fixed-dim dark:text-primary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help_outline</span>
+</button>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Main Content Area -->
+<div class="md:col-span-12 lg:col-span-8 flex flex-col gap-6">
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<!-- Metric 1 -->
+<div class="glass-panel rounded-xl p-4 flex flex-col gap-2 relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary-container/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase">Engine Latency</h3>
+<div class="flex items-end justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface">12.4<span class="text-body-md text-on-surface-variant ml-1">ms</span></span>
+<span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 0;">trending_down</span>
+</div>
+<div class="h-8 w-full mt-2 opacity-50">
+<svg class="w-full h-full preserve-aspect-ratio-none" viewbox="0 0 100 20">
+<polyline fill="none" points="0,15 20,10 40,18 60,5 80,12 100,2" stroke="#00dbe7" stroke-width="2"></polyline>
+</svg>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="glass-panel rounded-xl p-4 flex flex-col gap-2 relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary-container/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase">Active Pipelines</h3>
+<div class="flex items-end justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface">148</span>
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: 'FILL' 0;">account_tree</span>
+</div>
+<div class="h-8 w-full mt-2 opacity-50">
+<svg class="w-full h-full preserve-aspect-ratio-none" viewbox="0 0 100 20">
+<polyline fill="none" points="0,10 20,12 40,8 60,15 80,10 100,5" stroke="#00dbe7" stroke-width="2"></polyline>
+</svg>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="glass-panel rounded-xl p-4 flex flex-col gap-2 relative overflow-hidden group">
+<div class="absolute inset-0 bg-error/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase">CPU Load</h3>
+<div class="flex items-end justify-between">
+<span class="font-headline-lg text-headline-lg text-error">84<span class="text-body-md text-on-surface-variant ml-1">%</span></span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 0;">warning</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 mt-4 rounded-full overflow-hidden">
+<div class="bg-error h-full w-[84%]"></div>
+</div>
+</div>
+</div>
+<!-- Radar Chart Area -->
+<div class="glass-panel rounded-xl p-6 min-h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-6 pb-4 border-b border-outline-variant">
+<h2 class="font-headline-md text-headline-md text-on-surface">System Health Radar</h2>
+<button class="bg-[#1a1a1a] border border-outline-variant px-3 py-1.5 rounded text-label-sm font-label-sm text-on-surface hover:border-primary-fixed-dim transition-colors">
+                            EXPORT
+                        </button>
+</div>
+<div class="flex-1 relative flex items-center justify-center">
+<!-- Placeholder for actual radar chart -->
+<div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-container via-transparent to-transparent"></div>
+<div class="w-64 h-64 border border-outline-variant rounded-full flex items-center justify-center relative">
+<div class="w-48 h-48 border border-outline-variant rounded-full absolute"></div>
+<div class="w-32 h-32 border border-outline-variant rounded-full absolute"></div>
+<div class="w-16 h-16 border border-outline-variant rounded-full absolute"></div>
+<!-- Hexagon overlay -->
+<svg class="absolute inset-0 w-full h-full text-primary-fixed-dim opacity-50 drop-shadow-[0_0_8px_rgba(0,219,231,0.5)]" viewbox="0 0 100 100">
+<polygon fill="rgba(0,219,231,0.1)" points="50,10 90,30 90,70 50,90 10,70 10,30" stroke="currentColor" stroke-width="1"></polygon>
+<polygon fill="none" points="50,20 75,35 75,65 50,80 25,65 25,35" stroke="currentColor" stroke-dasharray="2,2" stroke-width="0.5"></polygon>
+<!-- Axes -->
+<line stroke="#3a494b" stroke-width="1" x1="50" x2="50" y1="50" y2="10"></line>
+<line stroke="#3a494b" stroke-width="1" x1="50" x2="90" y1="50" y2="30"></line>
+<line stroke="#3a494b" stroke-width="1" x1="50" x2="90" y1="50" y2="70"></line>
+<line stroke="#3a494b" stroke-width="1" x1="50" x2="50" y1="50" y2="90"></line>
+<line stroke="#3a494b" stroke-width="1" x1="50" x2="10" y1="50" y2="70"></line>
+<line stroke="#3a494b" stroke-width="1" x1="50" x2="10" y1="50" y2="30"></line>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar / Activity Feed -->
+<div class="md:col-span-12 lg:col-span-4 flex flex-col gap-6">
+<div class="glass-panel rounded-xl flex flex-col h-full">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md text-on-surface">Cognitive Logs</h2>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">filter_list</span>
+</div>
+<div class="p-4 flex-1 overflow-y-auto space-y-4">
+<!-- Log Item -->
+<div class="flex gap-3 items-start border-l-2 border-primary-fixed-dim pl-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-fixed-dim text-sm" style="font-variation-settings: 'FILL' 0;">memory</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Model sync complete: V4.2</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">2 mins ago • Node Alpha</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="flex gap-3 items-start border-l-2 border-secondary-fixed-dim pl-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-sm" style="font-variation-settings: 'FILL' 0;">sync</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Pipeline #894 optimized</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">14 mins ago • Auto-scaler</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="flex gap-3 items-start border-l-2 border-error pl-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error text-sm" style="font-variation-settings: 'FILL' 0;">warning</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Threshold exceeded: Memory</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">1 hr ago • Cluster 3</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="flex gap-3 items-start border-l-2 border-outline-variant pl-3 opacity-60">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" style="font-variation-settings: 'FILL' 0;">info</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Routine backup finished</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">3 hrs ago • System</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe h-20 md:hidden">
+<button class="flex flex-col items-center justify-center bg-primary-container/10 text-primary-fixed-dim rounded-xl px-3 py-1 ring-1 ring-primary-container/30 shadow-[0_0_15px_rgba(0,242,255,0.2)] scale-110 transition-transform duration-300 ease-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-sm text-label-sm mt-1">Overview</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">memory</span>
+<span class="font-label-sm text-label-sm mt-1">Engine</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_tree</span>
+<span class="font-label-sm text-label-sm mt-1">Pipeline</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">sync_alt</span>
+<span class="font-label-sm text-label-sm mt-1">External</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">construction</span>
+<span class="font-label-sm text-label-sm mt-1">Build</span>
+</button>
+</nav>
+</body></html>

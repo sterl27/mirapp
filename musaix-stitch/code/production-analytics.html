@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MUSAIX ENGINE - Deep Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#2ae500",
+                        "on-surface-variant": "#b9cacb",
+                        "inverse-surface": "#e5e2e1",
+                        "tertiary": "#fff4f9",
+                        "on-tertiary-fixed": "#380038",
+                        "on-tertiary-container": "#ab00aa",
+                        "on-primary": "#00363a",
+                        "surface-container-low": "#1c1b1b",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-tertiary-fixed-variant": "#810081",
+                        "secondary": "#d7ffc5",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#5b005b",
+                        "surface-bright": "#3a3939",
+                        "surface-variant": "#353534",
+                        "on-primary-fixed": "#002022",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#353534",
+                        "on-secondary-fixed-variant": "#095300",
+                        "background": "#131313",
+                        "surface-container": "#201f1f",
+                        "primary-fixed-dim": "#00dbe7",
+                        "secondary-container": "#2ff801",
+                        "error": "#ffb4ab",
+                        "primary-container": "#00f2ff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#74f5ff",
+                        "outline": "#849495",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary-container": "#0f6d00",
+                        "secondary-fixed": "#79ff5b",
+                        "on-primary-container": "#006a71",
+                        "surface-container-high": "#2a2a2a",
+                        "surface": "#131313",
+                        "tertiary-fixed-dim": "#ffabf3",
+                        "on-secondary-fixed": "#022100",
+                        "tertiary-container": "#ffcbf4",
+                        "inverse-primary": "#00696f",
+                        "on-surface": "#e5e2e1",
+                        "on-background": "#e5e2e1",
+                        "on-secondary": "#053900",
+                        "surface-tint": "#00dbe7",
+                        "tertiary-fixed": "#ffd7f5",
+                        "surface-dim": "#131313",
+                        "primary": "#e1fdff",
+                        "outline-variant": "#3a494b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(32, 31, 31, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid #333;
+        }
+        .active-glow {
+            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.2));
+        }
+        .btn-primary {
+            background-color: #00f2ff;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.4);
+            transform: scale(1.02);
+        }
+        .btn-ghost {
+            border: 1px solid #333;
+            color: #fff;
+            transition: all 0.2s ease;
+        }
+        .btn-ghost:hover {
+            border-color: #00f2ff;
+            color: #00f2ff;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.6;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+        
+        /* Custom Scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #849495;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col pt-16 pb-20 md:pb-0 overflow-x-hidden selection:bg-primary-container selection:text-black">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface dark:bg-surface border-b border-outline-variant flat no shadows md:px-margin-desktop transition-all">
+<div class="flex items-center gap-4">
+<button class="text-primary-fixed-dim dark:text-primary-fixed-dim hover:text-primary transition-colors focus:outline-none md:hidden">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold tracking-widest text-primary-fixed-dim dark:text-primary-fixed-dim uppercase">MUSAIX ENGINE</h1>
+</div>
+<!-- Desktop Nav Cluster -->
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200" href="#">
+<span class="font-label-sm text-label-sm uppercase">Overview</span>
+</a>
+<a class="h-full flex items-center border-b-2 border-primary-container text-primary dark:text-primary-fixed opacity-80 transition-all font-label-sm text-label-sm uppercase active-glow" href="#">
+                Engine
+            </a>
+<a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200" href="#">
+<span class="font-label-sm text-label-sm uppercase">Pipeline</span>
+</a>
+<a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200" href="#">
+<span class="font-label-sm text-label-sm uppercase">External</span>
+</a>
+<a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200" href="#">
+<span class="font-label-sm text-label-sm uppercase">Build</span>
+</a>
+</nav>
+<button class="text-primary-fixed-dim dark:text-primary-fixed-dim hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help_outline</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 flex flex-col gap-8 mt-4">
+<!-- Dashboard Header & Controls -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-surface-variant pb-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Deep Analytics</h2>
+<p class="text-on-surface-variant text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" style="font-size: 16px;">analytics</span>
+                    Real-time neural engine telemetry and integration metrics
+                </p>
+</div>
+<div class="flex flex-wrap items-center gap-4">
+<!-- Date Range Picker -->
+<div class="flex items-center gap-2 bg-surface-container-low border border-surface-variant rounded-lg p-1">
+<div class="relative group">
+<input aria-label="Start Date" class="bg-transparent border-none text-on-surface text-sm focus:ring-0 focus:outline-none w-32 cursor-pointer transition-colors group-hover:text-primary-fixed-dim" type="date" value="2024-05-01"/>
+</div>
+<span class="text-on-surface-variant text-sm">-</span>
+<div class="relative group">
+<input aria-label="End Date" class="bg-transparent border-none text-on-surface text-sm focus:ring-0 focus:outline-none w-32 cursor-pointer transition-colors group-hover:text-primary-fixed-dim" type="date" value="2024-05-31"/>
+</div>
+</div>
+<!-- Export Button -->
+<button class="btn-ghost flex items-center gap-2 px-4 py-2 rounded-lg font-label-sm text-label-sm uppercase tracking-wider h-[42px]">
+<span class="material-symbols-outlined" style="font-size: 18px;">download</span>
+                    Export CSV
+                </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Spectral Density Over Time (Line Chart) -->
+<div class="glass-panel rounded-xl col-span-1 md:col-span-8 p-6 flex flex-col relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/5 to-transparent opacity-50 pointer-events-none"></div>
+<div class="flex justify-between items-center mb-6 relative z-10 border-b border-surface-variant pb-3">
+<h3 class="font-headline-md text-lg text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" style="font-size: 20px;">graphic_eq</span>
+                        Spectral Density Variance
+                    </h3>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-high rounded text-xs font-mono text-on-surface-variant">Freq: 20Hz-20kHz</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary-container border border-primary-container/30 rounded text-xs font-mono active-glow">LIVE</span>
+</div>
+</div>
+<div class="flex-grow w-full h-[300px] relative z-10">
+<canvas id="spectralChart"></canvas>
+</div>
+</div>
+<!-- Key Metrics Column -->
+<div class="col-span-1 md:col-span-4 flex flex-col gap-gutter">
+<!-- Cognitive Load (Dial/Gauge equivalent) -->
+<div class="glass-panel rounded-xl p-6 relative overflow-hidden flex flex-col justify-center items-center h-full min-h-[180px]">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-error/5 pointer-events-none"></div>
+<div class="text-center relative z-10 w-full">
+<h4 class="text-on-surface-variant text-sm uppercase tracking-widest mb-4">Neural Peak Load</h4>
+<div class="flex items-end justify-center gap-2 mb-2">
+<span class="font-headline-xl text-5xl text-error-container glow-text" style="filter: drop-shadow(0 0 8px rgba(147, 0, 10, 0.4));">87</span>
+<span class="text-on-surface-variant mb-1">%</span>
+</div>
+<!-- Segmented LED Progress Bar -->
+<div class="w-full h-3 flex gap-[1px] mt-4 px-4">
+<div class="flex-1 bg-secondary-fixed-dim opacity-40"></div>
+<div class="flex-1 bg-secondary-fixed-dim opacity-60"></div>
+<div class="flex-1 bg-secondary-fixed-dim opacity-80"></div>
+<div class="flex-1 bg-secondary-fixed-dim shadow-[0_0_8px_#2ae500]"></div>
+<div class="flex-1 bg-surface-bright"></div>
+<div class="flex-1 bg-surface-bright"></div>
+<div class="flex-1 bg-surface-bright"></div>
+<div class="flex-1 bg-surface-bright"></div>
+<div class="flex-1 bg-surface-bright"></div>
+<div class="flex-1 bg-error shadow-[0_0_8px_#ffb4ab]"></div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="glass-panel rounded-xl p-6 flex flex-col gap-4">
+<h4 class="text-on-surface-variant text-sm uppercase tracking-widest border-b border-surface-variant pb-2 mb-2">Engine Controls</h4>
+<button class="btn-primary w-full py-3 rounded-lg font-label-sm text-label-sm uppercase tracking-wider flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">memory</span>
+                        Force Garbage Collection
+                    </button>
+<button class="btn-ghost w-full py-3 rounded-lg font-label-sm text-label-sm uppercase tracking-wider flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">sync_alt</span>
+                        Resync External Clock
+                    </button>
+</div>
+</div>
+<!-- Cognitive Layer Utilization (Heatmap visualization using a grid) -->
+<div class="glass-panel rounded-xl col-span-1 md:col-span-6 p-6">
+<div class="flex justify-between items-center mb-6 border-b border-surface-variant pb-3">
+<h3 class="font-headline-md text-lg text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" style="font-size: 20px;">grid_view</span>
+                        Cognitive Layer Heatmap
+                    </h3>
+<select class="bg-surface-container-low border border-surface-variant text-on-surface text-sm rounded focus:ring-primary-container focus:border-primary-container py-1">
+<option>Layer 1-4</option>
+<option>Layer 5-8</option>
+<option>Attention Heads</option>
+</select>
+</div>
+<div class="w-full flex flex-col gap-1">
+<!-- Y-axis labels and grid container -->
+<div class="flex items-center gap-2" id="heatmap-container">
+<!-- JS will populate this to avoid massive HTML boilerplate for a fake heatmap -->
+</div>
+<div class="flex justify-between text-xs text-on-surface-variant mt-2 px-8">
+<span>t=0ms</span>
+<span>t=250ms</span>
+<span>t=500ms</span>
+</div>
+</div>
+</div>
+<!-- External Integration Performance (Bar Chart) -->
+<div class="glass-panel rounded-xl col-span-1 md:col-span-6 p-6">
+<div class="flex justify-between items-center mb-6 border-b border-surface-variant pb-3">
+<h3 class="font-headline-md text-lg text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed-dim" style="font-size: 20px;">compare_arrows</span>
+                        API Latency: Ableton vs Suno
+                    </h3>
+</div>
+<div class="w-full h-[250px] relative">
+<canvas id="integrationChart"></canvas>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe h-20 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant flat no shadows">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" style="font-size: 24px;">dashboard</span>
+<span class="font-label-sm text-label-sm text-[10px]">Overview</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container/10 text-primary-fixed-dim rounded-xl px-3 py-1 ring-1 ring-primary-container/30 shadow-[0_0_15px_rgba(0,242,255,0.2)] scale-110 transition-transform duration-300 ease-out w-16 active-glow" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1; font-size: 24px;">memory</span>
+<span class="font-label-sm text-label-sm text-[10px]">Engine</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" style="font-size: 24px;">account_tree</span>
+<span class="font-label-sm text-label-sm text-[10px]">Pipeline</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" style="font-size: 24px;">sync_alt</span>
+<span class="font-label-sm text-label-sm text-[10px]">External</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" style="font-size: 24px;">construction</span>
+<span class="font-label-sm text-label-sm text-[10px]">Build</span>
+</a>
+</nav>
+<!-- Chart.js and interactions script -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart.js Global Defaults for Dark Theme
+            Chart.defaults.color = '#849495'; // text-outline
+            Chart.defaults.font.family = 'Inter, sans-serif';
+            Chart.defaults.scale.grid.color = '#353534'; // surface-variant
+
+            // 1. Spectral Density Line Chart
+            const ctxSpectral = document.getElementById('spectralChart').getContext('2d');
+            
+            // Create gradient for line area
+            let gradientSpectral = ctxSpectral.createLinearGradient(0, 0, 0, 300);
+            gradientSpectral.addColorStop(0, 'rgba(0, 242, 255, 0.4)'); // primary-container
+            gradientSpectral.addColorStop(1, 'rgba(0, 242, 255, 0.0)');
+
+            let gradientSecondary = ctxSpectral.createLinearGradient(0, 0, 0, 300);
+            gradientSecondary.addColorStop(0, 'rgba(255, 171, 243, 0.3)'); // tertiary-fixed-dim
+            gradientSecondary.addColorStop(1, 'rgba(255, 171, 243, 0.0)');
+
+            // Generate some spiky data looking like audio spectrum over time
+            const labelsTime = Array.from({length: 20}, (_, i) => `T-${20-i}s`);
+            const dataLowEnd = Array.from({length: 20}, () => Math.floor(Math.random() * 60) + 40);
+            const dataHighEnd = Array.from({length: 20}, () => Math.floor(Math.random() * 40) + 10);
+
+            new Chart(ctxSpectral, {
+                type: 'line',
+                data: {
+                    labels: labelsTime,
+                    datasets: [
+                        {
+                            label: 'Low Freq Density',
+                            data: dataLowEnd,
+                            borderColor: '#00f2ff', // primary-container
+                            backgroundColor: gradientSpectral,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        },
+                        {
+                            label: 'High Freq Density',
+                            data: dataHighEnd,
+                            borderColor: '#ffabf3', // tertiary-fixed-dim
+                            backgroundColor: gradientSecondary,
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', align: 'end', labels: { boxWidth: 12, usePointStyle: true } },
+                        tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#00f2ff' }
+                    },
+                    scales: {
+                        x: { display: false }, // hide x axis for a cleaner synth look
+                        y: { beginAtZero: true, max: 100 }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                }
+            });
+
+
+            // 2. Integration Performance Bar Chart
+            const ctxIntegration = document.getElementById('integrationChart').getContext('2d');
+            
+            new Chart(ctxIntegration, {
+                type: 'bar',
+                data: {
+                    labels: ['Auth', 'Data Fetch', 'Render', 'Sync', 'Export'],
+                    datasets: [
+                        {
+                            label: 'Ableton Link (ms)',
+                            data: [12, 45, 120, 18, 85],
+                            backgroundColor: '#2ae500', // secondary-fixed-dim
+                            borderRadius: 4,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.8
+                        },
+                        {
+                            label: 'Suno API (ms)',
+                            data: [40, 110, 85, 60, 150],
+                            backgroundColor: '#353534', // surface-variant
+                            borderColor: '#849495', // outline
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Latency (ms)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 3. Generate Fake Heatmap Data
+            const heatmapContainer = document.getElementById('heatmap-container');
+            const layers = ['L1', 'L2', 'L3', 'L4'];
+            const cols = 24; // time slices
+
+            // Color scale function (dark surface to primary-container cyan)
+            function getHeatColor(val) {
+                // val is 0 to 1
+                if(val < 0.2) return 'bg-surface-container-low';
+                if(val < 0.4) return 'bg-primary-container/20';
+                if(val < 0.6) return 'bg-primary-container/40';
+                if(val < 0.8) return 'bg-primary-container/70';
+                return 'bg-primary-container shadow-[0_0_8px_rgba(0,242,255,0.8)]';
+            }
+
+            let html = `<div class="flex flex-col gap-1 pr-2 border-r border-surface-variant w-8">`;
+            layers.forEach(l => { html += `<span class="text-xs text-on-surface-variant font-mono h-6 flex items-center">${l}</span>`; });
+            html += `</div><div class="flex flex-col gap-1 flex-grow">`;
+
+            layers.forEach(l => {
+                html += `<div class="flex gap-1 w-full h-6">`;
+                for(let i=0; i<cols; i++) {
+                    // Create some pattern, heavier in middle
+                    let base = Math.sin(i / cols * Math.PI) * 0.8;
+                    let noise = Math.random() * 0.4;
+                    let val = Math.min(1, Math.max(0, base + noise - (layers.indexOf(l)*0.1)));
+                    html += `<div class="flex-1 rounded-[2px] ${getHeatColor(val)} transition-colors duration-500 hover:bg-tertiary-fixed-dim"></div>`;
+                }
+                html += `</div>`;
+            });
+            html += `</div>`;
+            
+            heatmapContainer.innerHTML = html;
+
+        });
+    </script>
+</body></html>

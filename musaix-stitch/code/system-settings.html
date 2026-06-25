@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MUSAIX ENGINE - Dashboard Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#2ae500",
+                        "on-surface-variant": "#b9cacb",
+                        "inverse-surface": "#e5e2e1",
+                        "tertiary": "#fff4f9",
+                        "on-tertiary-fixed": "#380038",
+                        "on-tertiary-container": "#ab00aa",
+                        "on-primary": "#00363a",
+                        "surface-container-low": "#1c1b1b",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-tertiary-fixed-variant": "#810081",
+                        "secondary": "#d7ffc5",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#5b005b",
+                        "surface-bright": "#3a3939",
+                        "surface-variant": "#353534",
+                        "on-primary-fixed": "#002022",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#353534",
+                        "on-secondary-fixed-variant": "#095300",
+                        "background": "#131313",
+                        "surface-container": "#201f1f",
+                        "primary-fixed-dim": "#00dbe7",
+                        "secondary-container": "#2ff801",
+                        "error": "#ffb4ab",
+                        "primary-container": "#00f2ff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#74f5ff",
+                        "outline": "#849495",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary-container": "#0f6d00",
+                        "secondary-fixed": "#79ff5b",
+                        "on-primary-container": "#006a71",
+                        "surface-container-high": "#2a2a2a",
+                        "surface": "#131313",
+                        "tertiary-fixed-dim": "#ffabf3",
+                        "on-secondary-fixed": "#022100",
+                        "tertiary-container": "#ffcbf4",
+                        "inverse-primary": "#00696f",
+                        "on-surface": "#e5e2e1",
+                        "on-background": "#e5e2e1",
+                        "on-secondary": "#053900",
+                        "surface-tint": "#00dbe7",
+                        "tertiary-fixed": "#ffd7f5",
+                        "surface-dim": "#131313",
+                        "primary": "#e1fdff",
+                        "outline-variant": "#3a494b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+        }
+        .glass-panel {
+            background: rgba(32, 31, 31, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid #333;
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+        .neon-border-focus:focus-within {
+            border-color: #00f2ff;
+            box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.3);
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #00f2ff;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #00f2ff;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-24 md:pb-0 pt-16 font-body-md text-body-md bg-background overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface dark:bg-surface border-b border-outline-variant flat no shadows">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<div class="font-headline-md text-headline-md font-bold tracking-widest text-primary-fixed-dim dark:text-primary-fixed-dim">
+            MUSAIX ENGINE
+        </div>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help_outline</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+<div class="mb-10">
+<h1 class="font-headline-lg text-headline-lg md:font-headline-xl md:text-headline-xl text-primary-fixed-dim mb-2">Engine Settings</h1>
+<p class="text-on-surface-variant font-body-lg text-body-lg">Configure system defaults, integrations, and preferences.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Side Navigation (Settings Menu) - Desktop Only -->
+<nav class="hidden lg:block lg:col-span-3 space-y-2">
+<a class="block px-4 py-3 rounded-lg bg-surface-container-high border border-outline-variant text-primary-fixed-dim flex items-center gap-3" href="#account">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-body-md text-body-md font-semibold">Account</span>
+</a>
+<a class="block px-4 py-3 rounded-lg hover:bg-surface-container border border-transparent hover:border-outline-variant text-on-surface-variant transition-colors flex items-center gap-3" href="#engine">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">memory</span>
+<span class="font-body-md text-body-md">Engine Defaults</span>
+</a>
+<a class="block px-4 py-3 rounded-lg hover:bg-surface-container border border-transparent hover:border-outline-variant text-on-surface-variant transition-colors flex items-center gap-3" href="#integrations">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">key</span>
+<span class="font-body-md text-body-md">Integration Keys</span>
+</a>
+<a class="block px-4 py-3 rounded-lg hover:bg-surface-container border border-transparent hover:border-outline-variant text-on-surface-variant transition-colors flex items-center gap-3" href="#theme">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">palette</span>
+<span class="font-body-md text-body-md">Preferences</span>
+</a>
+</nav>
+<!-- Settings Sections -->
+<div class="lg:col-span-9 space-y-10">
+<!-- Account Section -->
+<section class="glass-panel rounded-xl p-6" id="account">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 border-b border-outline-variant pb-2">Account Profile</h2>
+<div class="flex items-center gap-6 mb-8">
+<div class="w-24 h-24 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden flex items-center justify-center relative group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant">person</span>
+<div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-primary-fixed-dim">upload</span>
+</div>
+</div>
+<div>
+<button class="bg-surface-container border border-[#333] text-on-surface px-4 py-2 rounded hover:border-primary-container transition-colors mb-2 font-label-sm text-label-sm uppercase tracking-widest">Change Avatar</button>
+<p class="text-on-surface-variant font-label-sm text-label-sm">JPG, GIF or PNG. Max size of 2MB.</p>
+</div>
+</div>
+<div class="space-y-5">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div class="space-y-2 neon-border-focus rounded">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block">Display Name</label>
+<input class="w-full bg-[#1A1A1A] border-[#333] text-on-surface rounded p-3 focus:ring-0 focus:border-primary-container transition-colors" type="text" value="Producer_01"/>
+</div>
+<div class="space-y-2 neon-border-focus rounded">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block">Email Address</label>
+<input class="w-full bg-[#1A1A1A] border-[#333] text-on-surface rounded p-3 focus:ring-0 focus:border-primary-container transition-colors" readonly="" type="email" value="producer@musaix.io"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Engine Defaults Section -->
+<section class="glass-panel rounded-xl p-6" id="engine">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 border-b border-outline-variant pb-2">Engine Defaults</h2>
+<div class="space-y-8">
+<!-- Latency Threshold -->
+<div>
+<div class="flex justify-between items-center mb-4">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface">Processing Latency Threshold</h3>
+<p class="text-on-surface-variant font-label-sm text-label-sm mt-1">Maximum allowed latency before degrading generation quality.</p>
+</div>
+<div class="bg-primary-container/10 text-primary-fixed-dim px-3 py-1 rounded font-label-sm text-label-sm uppercase tracking-widest border border-primary-container/30">
+<span id="latency-val">128 ms</span>
+</div>
+</div>
+<div class="relative w-full h-2 bg-[#333] rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary-container" style="width: 40%;"></div>
+<input class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer" max="512" min="32" oninput="document.getElementById('latency-val').innerText = this.value + ' ms'; this.previousElementSibling.style.width = ((this.value-32)/(512-32))*100 + '%'" type="range" value="128"/>
+</div>
+<div class="flex justify-between text-on-surface-variant font-label-sm text-label-sm mt-2">
+<span>32ms (High CPU)</span>
+<span>512ms (Eco)</span>
+</div>
+</div>
+<hr class="border-outline-variant"/>
+<!-- Default Cognition Layers -->
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface mb-4">Default Cognition Layers</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<label class="flex items-center p-4 border border-[#333] rounded-lg bg-surface-container-low cursor-pointer hover:border-primary-container/50 transition-colors">
+<input checked="" class="form-checkbox h-5 w-5 text-primary-container rounded border-[#333] bg-[#1A1A1A] focus:ring-primary-container focus:ring-offset-background" type="checkbox"/>
+<div class="ml-3">
+<span class="block font-body-md text-body-md text-on-surface">Rhythmic Analysis</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Real-time transient detection</span>
+</div>
+</label>
+<label class="flex items-center p-4 border border-[#333] rounded-lg bg-surface-container-low cursor-pointer hover:border-primary-container/50 transition-colors">
+<input checked="" class="form-checkbox h-5 w-5 text-primary-container rounded border-[#333] bg-[#1A1A1A] focus:ring-primary-container focus:ring-offset-background" type="checkbox"/>
+<div class="ml-3">
+<span class="block font-body-md text-body-md text-on-surface">Harmonic Parsing</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Polyphonic pitch estimation</span>
+</div>
+</label>
+<label class="flex items-center p-4 border border-[#333] rounded-lg bg-surface-container-low cursor-pointer hover:border-primary-container/50 transition-colors">
+<input class="form-checkbox h-5 w-5 text-primary-container rounded border-[#333] bg-[#1A1A1A] focus:ring-primary-container focus:ring-offset-background" type="checkbox"/>
+<div class="ml-3">
+<span class="block font-body-md text-body-md text-on-surface">Timbral Mapping</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Spectral envelope extraction</span>
+</div>
+</label>
+<label class="flex items-center p-4 border border-[#333] rounded-lg bg-surface-container-low cursor-pointer hover:border-primary-container/50 transition-colors">
+<input class="form-checkbox h-5 w-5 text-primary-container rounded border-[#333] bg-[#1A1A1A] focus:ring-primary-container focus:ring-offset-background" type="checkbox"/>
+<div class="ml-3">
+<span class="block font-body-md text-body-md text-on-surface">Spatial Rendering</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Binaural impulse responses</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Integration Keys Section -->
+<section class="glass-panel rounded-xl p-6" id="integrations">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 border-b border-outline-variant pb-2">Integration Keys</h2>
+<div class="space-y-6">
+<div class="p-5 border border-[#333] rounded-lg bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#1A1A1A] border border-[#333] rounded flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined">cable</span>
+</div>
+<div>
+<h3 class="font-body-md text-body-md font-semibold text-on-surface">Ableton Link</h3>
+<p class="text-on-surface-variant font-label-sm text-label-sm mt-1">Sync tempo across local network.</p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#333] transition-all duration-300 z-10" id="toggle1" name="toggle" style="right: 0; border-color: #00f2ff;" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#1A1A1A] cursor-pointer bg-primary-container transition-all duration-300" for="toggle1"></label>
+</div>
+</div>
+<div class="p-5 border border-[#333] rounded-lg bg-surface-container-low space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#1A1A1A] border border-[#333] rounded flex items-center justify-center text-secondary-fixed-dim">
+<span class="material-symbols-outlined">api</span>
+</div>
+<div>
+<h3 class="font-body-md text-body-md font-semibold text-on-surface">Suno API Key</h3>
+<p class="text-on-surface-variant font-label-sm text-label-sm mt-1">External generation endpoint.</p>
+</div>
+</div>
+<div class="flex gap-2 neon-border-focus rounded">
+<input class="w-full bg-[#1A1A1A] border-[#333] text-on-surface rounded p-3 font-mono text-sm focus:ring-0 focus:border-primary-container transition-colors" type="password" value="sk-suno-1234567890abcdef"/>
+<button aria-label="Reveal Key" class="px-4 bg-surface-container border border-[#333] rounded hover:border-primary-container hover:text-primary-fixed-dim transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">visibility</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Save Actions -->
+<div class="flex justify-end gap-4 pt-4 border-t border-outline-variant">
+<button class="px-6 py-2 rounded bg-transparent border border-[#333] text-on-surface hover:border-primary-container hover:text-primary-fixed-dim transition-colors font-label-sm text-label-sm uppercase tracking-widest">Revert</button>
+<button class="px-6 py-2 rounded bg-primary-container text-[#000] font-label-sm text-label-sm uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,242,255,0.4)] hover:shadow-[0_0_25px_rgba(0,242,255,0.6)] transition-shadow">Apply Changes</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe h-20 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant flat no shadows">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-sm text-label-sm mt-1">Overview</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container/10 text-primary-fixed-dim rounded-xl px-3 py-1 ring-1 ring-primary-container/30 shadow-[0_0_15px_rgba(0,242,255,0.2)] scale-110 transition-transform duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">memory</span>
+<span class="font-label-sm text-label-sm mt-1">Engine</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_tree</span>
+<span class="font-label-sm text-label-sm mt-1">Pipeline</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">sync_alt</span>
+<span class="font-label-sm text-label-sm mt-1">External</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">construction</span>
+<span class="font-label-sm text-label-sm mt-1">Build</span>
+</a>
+</nav>
+</body></html>

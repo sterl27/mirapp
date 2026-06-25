@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Track Analysis - MUSAIX ENGINE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-error": "#690005", "on-tertiary-fixed": "#380038", "on-primary-fixed": "#002022",
+          "on-primary-fixed-variant": "#004f54", "tertiary": "#fff4f9", "on-tertiary-fixed-variant": "#810081",
+          "error-container": "#93000a", "surface-container-lowest": "#0e0e0e", "on-primary": "#00363a",
+          "on-tertiary-container": "#ab00aa", "on-background": "#e5e2e1", "background": "#131313",
+          "inverse-surface": "#e5e2e1", "surface-container-highest": "#353534", "surface-bright": "#3a3939",
+          "on-surface": "#e5e2e1", "inverse-on-surface": "#313030", "surface": "#131313",
+          "tertiary-container": "#ffcbf4", "on-secondary": "#053900", "error": "#ffb4ab",
+          "on-secondary-container": "#0f6d00", "inverse-primary": "#00696f", "secondary": "#d7ffc5",
+          "surface-container": "#201f1f", "primary-container": "#00f2ff", "outline-variant": "#3a494b",
+          "primary": "#e1fdff", "surface-dim": "#131313", "primary-fixed": "#74f5ff",
+          "secondary-fixed": "#79ff5b", "on-error-container": "#ffdad6", "secondary-fixed-dim": "#2ae500",
+          "on-surface-variant": "#b9cacb", "surface-tint": "#00dbe7", "outline": "#849495",
+          "primary-fixed-dim": "#00dbe7", "secondary-container": "#2ff801", "surface-container-low": "#1c1b1b",
+          "tertiary-fixed-dim": "#ffabf3", "on-tertiary": "#5b005b", "on-primary-container": "#006a71",
+          "surface-container-high": "#2a2a2a", "tertiary-fixed": "#ffd7f5", "on-secondary-fixed": "#022100",
+          "on-secondary-fixed-variant": "#095300", "surface-variant": "#353534"
+        },
+        "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+        "spacing": {
+          "gutter": "16px", "margin-desktop": "40px", "unit": "4px",
+          "margin-mobile": "16px", "container-max": "1440px"
+        },
+        "fontFamily": {
+          "label-sm": ["Geist"], "headline-lg": ["Inter"], "headline-xl": ["Inter"],
+          "headline-lg-mobile": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"]
+        },
+        "fontSize": {
+          "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500"}],
+          "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+          "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "800"}],
+          "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+          "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+          "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+          "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .glass-panel { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(8px); border: 1px solid #333; }
+  .active-glow { box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
+  .btn-primary { background-color: #00f2ff; color: #000; box-shadow: 0 0 15px rgba(0,242,255,0.2); transition: all 0.2s ease; }
+  .btn-primary:hover { box-shadow: 0 0 25px rgba(0,242,255,0.4); transform: scale(1.02); }
+  .btn-ghost { border: 1px solid #333; color: #fff; transition: all 0.2s ease; }
+  .btn-ghost:hover { border-color: #00f2ff; color: #00f2ff; }
+  .feature-bar-fill { transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .animate-spin { animation: spin 1s linear infinite; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #131313; }
+  ::-webkit-scrollbar-thumb { background: #353534; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #849495; }
+</style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen pb-24">
+
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b border-outline-variant md:px-margin-desktop">
+  <div class="flex items-center gap-3">
+    <span class="material-symbols-outlined text-primary-fixed-dim md:hidden">menu</span>
+    <h1 class="font-headline-md text-headline-md font-bold tracking-widest text-primary-fixed-dim uppercase">MUSAIX ENGINE</h1>
+  </div>
+  <nav class="hidden md:flex items-center gap-8 h-full">
+    <a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm uppercase" href="#">Overview</a>
+    <a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm uppercase" href="#">Engine</a>
+    <a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm uppercase" href="#">Pipeline</a>
+    <a class="h-full flex items-center border-b-2 border-primary-container text-primary-fixed-dim opacity-80 active-glow font-label-sm text-label-sm uppercase" href="external-integrations.html">External</a>
+    <a class="h-full flex items-center border-b-2 border-transparent text-on-surface-variant hover:text-primary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm uppercase" href="#">Build</a>
+  </nav>
+  <span class="material-symbols-outlined text-primary-fixed-dim">help_outline</span>
+</header>
+
+<main class="pt-20 px-margin-mobile max-w-container-max mx-auto md:px-margin-desktop py-8 flex flex-col gap-6">
+
+  <!-- Config Banner -->
+  <div id="config-banner" class="hidden glass-panel rounded-xl p-4 border-l-4 border-primary-fixed-dim flex items-start gap-3">
+    <span class="material-symbols-outlined text-primary-fixed-dim shrink-0">info</span>
+    <div class="flex-1">
+      <p class="font-label-sm text-label-sm text-primary-fixed-dim mb-2 uppercase tracking-wider">Setup Required — Two API Keys</p>
+      <div class="flex flex-col sm:flex-row gap-4 text-sm text-on-surface-variant">
+        <div>
+          <p class="text-on-surface mb-1">1. Spotify (search + artwork)</p>
+          <p>Create an app at <span class="text-primary-fixed-dim">developer.spotify.com/dashboard</span> — copy your <code class="bg-surface-container px-1 rounded text-primary-fixed-dim">Client ID</code> and <code class="bg-surface-container px-1 rounded text-primary-fixed-dim">Client Secret</code>.</p>
+        </div>
+        <div class="sm:border-l sm:border-outline-variant sm:pl-4">
+          <p class="text-on-surface mb-1">2. Last.fm (tags + stats)</p>
+          <p>Create an API account at <span class="text-secondary-fixed-dim">last.fm/api/account/create</span> — copy your <code class="bg-surface-container px-1 rounded text-secondary-fixed-dim">API Key</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header + Search -->
+  <div class="border-b border-surface-variant pb-6">
+    <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-1 flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary-container" style="font-size:28px;">spatial_audio_off</span>
+      Track Analysis
+    </h2>
+    <p class="text-on-surface-variant text-sm mb-6">
+      Spotify for search &amp; artwork &nbsp;·&nbsp; Last.fm for live tags &amp; listener stats
+    </p>
+
+    <div class="relative max-w-xl">
+      <form id="search-form">
+        <div class="flex gap-3">
+          <div class="relative flex-1">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-size:20px;">search</span>
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Search any song, artist, or album..."
+              autocomplete="off"
+              class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-3 pl-10 pr-4 text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary-fixed-dim transition-colors"
+            />
+          </div>
+          <button type="submit" class="btn-primary px-5 py-3 rounded-lg font-label-sm text-label-sm uppercase tracking-wider flex items-center gap-2 shrink-0">
+            <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+            Fetch
+          </button>
+        </div>
+      </form>
+
+      <!-- Search Results Dropdown -->
+      <div id="search-results" class="hidden absolute top-full left-0 right-0 mt-2 glass-panel rounded-xl overflow-hidden z-40 border border-outline-variant shadow-2xl">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div id="loading-state" class="hidden flex flex-col items-center justify-center py-20 gap-4">
+    <div class="w-10 h-10 rounded-full border-2 border-surface-container-high border-t-primary-fixed-dim animate-spin"></div>
+    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Fetching from Spotify &amp; Last.fm...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error-state" class="hidden glass-panel rounded-xl p-6 flex items-center gap-4 border-l-4 border-error">
+    <span class="material-symbols-outlined text-error" style="font-size:28px;">error_outline</span>
+    <div>
+      <p class="font-label-sm text-label-sm text-error uppercase tracking-wider mb-1">API Error</p>
+      <p id="error-message" class="text-sm text-on-surface-variant"></p>
+    </div>
+  </div>
+
+  <!-- Analysis Panel -->
+  <div id="analysis-panel" class="hidden flex flex-col gap-6">
+
+    <!-- Track Header (Spotify) -->
+    <div class="glass-panel rounded-xl p-5 flex flex-col sm:flex-row gap-5 items-start">
+      <img id="track-artwork" src="" alt="Album art" class="w-28 h-28 rounded-xl object-cover shrink-0 shadow-[0_0_30px_rgba(0,242,255,0.15)]"/>
+      <div class="flex-1 min-w-0">
+        <p id="track-name" class="font-headline-md text-headline-md text-on-surface truncate mb-1"></p>
+        <p id="track-artist" class="text-on-surface-variant mb-0.5 truncate"></p>
+        <p id="track-album" class="text-sm text-on-surface-variant/60 mb-4 truncate"></p>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Pop</span>
+            <div id="popularity-leds" class="flex gap-[2px]"></div>
+            <span id="track-popularity" class="font-mono text-xs text-primary-fixed-dim"></span>
+          </div>
+          <span id="track-explicit" class="hidden px-2 py-0.5 bg-error/10 border border-error/30 rounded text-[10px] text-error font-label-sm uppercase">Explicit</span>
+          <span id="track-duration" class="font-mono text-xs text-on-surface-variant"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last.fm Section -->
+    <div id="lfm-section" class="hidden flex flex-col gap-6">
+
+      <!-- Tags -->
+      <div class="glass-panel rounded-xl p-5 flex flex-col gap-4">
+        <div class="flex items-center gap-2 border-b border-surface-variant pb-3">
+          <span class="material-symbols-outlined text-secondary-fixed-dim" style="font-size:20px;">label</span>
+          <h3 class="font-headline-md text-lg text-on-surface">Last.fm Tags</h3>
+          <span class="font-label-sm text-label-sm text-on-surface-variant ml-auto">live from last.fm</span>
+        </div>
+        <div id="tag-chips" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- Estimated Profile + Feature Bars -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+
+        <div class="glass-panel rounded-xl p-6 flex flex-col">
+          <div class="flex items-center gap-2 mb-1 border-b border-surface-variant pb-3">
+            <span class="material-symbols-outlined text-primary-container" style="font-size:20px;">radar</span>
+            <h3 class="font-headline-md text-lg text-on-surface">Estimated Profile</h3>
+          </div>
+          <p class="text-[11px] text-on-surface-variant mb-4">Derived from Last.fm tags — not directly measured</p>
+          <div class="flex-1 relative" style="min-height:240px;">
+            <canvas id="radar-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-panel rounded-xl p-6 flex flex-col">
+          <div class="flex items-center gap-2 mb-1 border-b border-surface-variant pb-3">
+            <span class="material-symbols-outlined text-secondary-fixed-dim" style="font-size:20px;">equalizer</span>
+            <h3 class="font-headline-md text-lg text-on-surface">Tag-Based Scores</h3>
+          </div>
+          <p class="text-[11px] text-on-surface-variant mb-4">Estimated from tag vocabulary — approximate</p>
+          <div id="feature-bars" class="flex flex-col gap-3 flex-1 justify-center"></div>
+        </div>
+      </div>
+
+      <!-- Stats Row (Last.fm) -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-gutter">
+        <div class="glass-panel rounded-xl p-4 text-center">
+          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Listeners</p>
+          <p id="metric-listeners" class="font-headline-md text-xl text-primary-fixed-dim font-bold">—</p>
+        </div>
+        <div class="glass-panel rounded-xl p-4 text-center">
+          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Scrobbles</p>
+          <p id="metric-scrobbles" class="font-headline-md text-xl text-secondary-fixed-dim font-bold">—</p>
+        </div>
+        <div class="glass-panel rounded-xl p-4 text-center col-span-2 md:col-span-1">
+          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Top Tag</p>
+          <p id="metric-top-tag" class="font-headline-md text-lg text-tertiary-fixed-dim font-bold truncate">—</p>
+        </div>
+      </div>
+
+      <!-- Wiki Summary -->
+      <div id="wiki-section" class="hidden glass-panel rounded-xl p-5">
+        <div class="flex items-center gap-2 mb-3 border-b border-surface-variant pb-3">
+          <span class="material-symbols-outlined text-outline" style="font-size:18px;">article</span>
+          <h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Track Summary</h4>
+          <span class="font-label-sm text-label-sm text-on-surface-variant/40 ml-auto">via last.fm</span>
+        </div>
+        <p id="wiki-text" class="text-sm text-on-surface-variant leading-relaxed"></p>
+      </div>
+
+    </div>
+
+    <!-- No Last.fm Data Notice -->
+    <div id="lfm-miss-notice" class="hidden glass-panel rounded-xl p-4 border-l-4 border-outline flex items-start gap-3">
+      <span class="material-symbols-outlined text-outline shrink-0">search_off</span>
+      <div>
+        <p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-1">Not found on Last.fm</p>
+        <p class="text-sm text-on-surface-variant">Last.fm doesn't have data for this track. Track metadata above is from Spotify. Try a more popular release or check the spelling.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe h-20 bg-surface-container-lowest border-t border-outline-variant">
+  <a href="#" class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 w-16">
+    <span class="material-symbols-outlined mb-1" style="font-size:24px;">dashboard</span>
+    <span class="font-label-sm text-label-sm">Overview</span>
+  </a>
+  <a href="#" class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 w-16">
+    <span class="material-symbols-outlined mb-1" style="font-size:24px;">memory</span>
+    <span class="font-label-sm text-label-sm">Engine</span>
+  </a>
+  <a href="#" class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 w-16">
+    <span class="material-symbols-outlined mb-1" style="font-size:24px;">account_tree</span>
+    <span class="font-label-sm text-label-sm">Pipeline</span>
+  </a>
+  <a href="external-integrations.html" class="flex flex-col items-center justify-center bg-primary-container/10 text-primary-fixed-dim rounded-xl px-3 py-1 ring-1 ring-primary-container/30 active-glow scale-110 w-16">
+    <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1; font-size:24px;">sync_alt</span>
+    <span class="font-label-sm text-label-sm">External</span>
+  </a>
+  <a href="#" class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 w-16">
+    <span class="material-symbols-outlined mb-1" style="font-size:24px;">construction</span>
+    <span class="font-label-sm text-label-sm">Build</span>
+  </a>
+</nav>
+
+<script>
+  <script src="config.js"></script>
+  // ═══════════════════════════════════════════════════════════════════
+  // CONFIGURATION — fill in both before opening
+  //
+  // Spotify  → developer.spotify.com/dashboard  (Client ID + Secret)
+  // Last.fm  → last.fm/api/account/create       (API Key only, free)
+  //
+  // This file is for local/desktop use only — don't host it publicly.
+  // ═══════════════════════════════════════════════════════════════════
+
+  // ── State ─────────────────────────────────────────────────────────
+  let _spotifyToken  = null;
+  let _tokenExpiry   = 0;
+  let _radarChart    = null;
+
+  // ── Tag → Feature scoring ─────────────────────────────────────────
+  // Maps Last.fm crowd-sourced tags to approximate 0–1 feature values.
+  const TAG_WEIGHTS = {
+    energy: {
+      high: ['energetic','energy','hard','intense','powerful','aggressive','fast','driving','heavy','metal','punk','hardcore','edm','drum and bass','dubstep','rave','phonk','drill','trap','industrial','noise'],
+      low:  ['calm','chill','soft','mellow','peaceful','relaxing','gentle','quiet','slow','ambient','sleep','meditation','lo-fi','lofi','drone'],
+    },
+    danceability: {
+      high: ['dance','danceable','club','groove','funk','disco','edm','house','techno','trance','pop','reggaeton','hip hop','hip-hop','trap','dance pop','boogie'],
+      low:  ['classical','ambient','folk','ballad','post-rock','shoegaze','doom','drone','noise'],
+    },
+    valence: {
+      high: ['happy','fun','upbeat','cheerful','positive','uplifting','joyful','feel good','euphoric','summer','party','bouncy','bright','playful'],
+      low:  ['sad','dark','melancholic','depressing','gloomy','emotional','melancholy','tragic','lonely','heartbreak','emo','doom','bleak','sorrow'],
+    },
+    acousticness: {
+      high: ['acoustic','folk','classical','unplugged','singer-songwriter','country','bluegrass','indie folk','fingerpicking','neofolk'],
+      low:  ['electronic','synth','edm','house','techno','dubstep','industrial','hyperpop','digital'],
+    },
+    instrumentalness: {
+      high: ['instrumental','classical','ambient','soundtrack','post-rock','jazz','new age','film score','neo-classical'],
+      low:  ['vocal','vocals','rap','hip hop','r&b','singer-songwriter','pop','sung','lyrics'],
+    },
+    liveness: {
+      high: ['live','concert','live recording','live album','bootleg'],
+      low:  ['studio','produced','overproduced','polished'],
+    },
+    speechiness: {
+      high: ['rap','hip hop','hip-hop','spoken word','comedy','freestyle','bars','flow','grime','drill'],
+      low:  ['instrumental','classical','ambient','post-rock','shoegaze','drone'],
+    },
+  };
+
+  function scoreFeature(tagNames, weights) {
+    let score = 0.5;
+    weights.high.forEach(kw => { if (tagNames.some(n => n.includes(kw))) score += 0.15; });
+    weights.low.forEach(kw  => { if (tagNames.some(n => n.includes(kw))) score -= 0.15; });
+    return Math.max(0.05, Math.min(0.95, score));
+  }
+
+  function tagsToFeatures(tags) {
+    const names = tags.map(t => t.name.toLowerCase());
+    return {
+      energy:          scoreFeature(names, TAG_WEIGHTS.energy),
+      danceability:    scoreFeature(names, TAG_WEIGHTS.danceability),
+      valence:         scoreFeature(names, TAG_WEIGHTS.valence),
+      acousticness:    scoreFeature(names, TAG_WEIGHTS.acousticness),
+      instrumentalness:scoreFeature(names, TAG_WEIGHTS.instrumentalness),
+      liveness:        scoreFeature(names, TAG_WEIGHTS.liveness),
+      speechiness:     scoreFeature(names, TAG_WEIGHTS.speechiness),
+    };
+  }
+
+  // ── Spotify Auth ──────────────────────────────────────────────────
+  async function getSpotifyToken() {
+    if (_spotifyToken && Date.now() < _tokenExpiry) return _spotifyToken;
+    const res = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET),
+      },
+      body: 'grant_type=client_credentials',
+    });
+    if (!res.ok) throw new Error(`Spotify auth failed (${res.status}). Check your Client ID and Secret.`);
+    const d = await res.json();
+    _spotifyToken = d.access_token;
+    _tokenExpiry  = Date.now() + d.expires_in * 1000;
+    return _spotifyToken;
+  }
+
+  async function spotifyGet(path) {
+    const token = await getSpotifyToken();
+    const res = await fetch('https://api.spotify.com/v1' + path, {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    return { ok: res.ok, data: await res.json() };
+  }
+
+  // ── Last.fm ───────────────────────────────────────────────────────
+  async function lfmTrackInfo(artist, track) {
+    const url = 'https://ws.audioscrobbler.com/2.0/?method=track.getInfo'
+      + '&api_key=' + LASTFM_API_KEY
+      + '&artist=' + encodeURIComponent(artist)
+      + '&track='  + encodeURIComponent(track)
+      + '&autocorrect=1&format=json';
+    const res = await fetch(url);
+    const d   = await res.json();
+    return (d.track && !d.error) ? d.track : null;
+  }
+
+  // ── Spotify Search ────────────────────────────────────────────────
+  async function searchTracks(query) {
+    const { ok, data } = await spotifyGet('/search?q=' + encodeURIComponent(query) + '&type=track&limit=6');
+    if (!ok) throw new Error('Spotify search failed. Check your Client ID.');
+    return data.tracks.items;
+  }
+
+  // ── UI State ──────────────────────────────────────────────────────
+  function setState(state) {
+    document.getElementById('loading-state').classList.toggle('hidden', state !== 'loading');
+    document.getElementById('error-state').classList.toggle('hidden', state !== 'error');
+    document.getElementById('analysis-panel').classList.toggle('hidden', state !== 'analysis');
+  }
+
+  function showError(msg) {
+    document.getElementById('error-message').textContent = msg;
+    setState('error');
+  }
+
+  // ── Render: Track Header ──────────────────────────────────────────
+  function renderTrackHeader(track) {
+    const art = track.album?.images[0]?.url;
+    const artEl = document.getElementById('track-artwork');
+    if (art) { artEl.src = art; artEl.style.display = 'block'; }
+    else      { artEl.style.display = 'none'; }
+
+    document.getElementById('track-name').textContent   = track.name;
+    document.getElementById('track-artist').textContent = track.artists.map(a => a.name).join(', ');
+    document.getElementById('track-album').textContent  =
+      (track.album?.name || '') + ' · ' + (track.album?.release_date?.slice(0, 4) || '');
+    document.getElementById('track-popularity').textContent = track.popularity;
+    document.getElementById('track-explicit').classList.toggle('hidden', !track.explicit);
+    document.getElementById('track-duration').textContent   = formatMs(track.duration_ms);
+
+    const filled = Math.round(track.popularity / 10);
+    document.getElementById('popularity-leds').innerHTML = Array.from({ length: 10 }, (_, i) => {
+      const active = i < filled;
+      const color  = i < 7 ? '#2ae500' : i < 9 ? '#00f2ff' : '#ffb4ab';
+      return `<div style="width:4px;height:12px;border-radius:1px;background:${active ? color : '#353534'};${active ? `box-shadow:0 0 6px ${color}` : ''}"></div>`;
+    }).join('');
+  }
+
+  // ── Render: Last.fm Data ──────────────────────────────────────────
+  function renderLfm(lfm) {
+    const hasData = !!lfm;
+    document.getElementById('lfm-section').classList.toggle('hidden', !hasData);
+    document.getElementById('lfm-miss-notice').classList.toggle('hidden', hasData);
+    if (!hasData) return;
+
+    // Tags
+    const tags = lfm.toptags?.tag || [];
+    const CHIP_COLORS = [
+      { bg: 'rgba(0,242,255,0.08)',   border: 'rgba(0,242,255,0.3)',   text: '#00dbe7' },
+      { bg: 'rgba(42,229,0,0.08)',    border: 'rgba(42,229,0,0.3)',    text: '#2ae500' },
+      { bg: 'rgba(255,171,243,0.08)', border: 'rgba(255,171,243,0.3)', text: '#ffabf3' },
+    ];
+    document.getElementById('tag-chips').innerHTML = tags.length
+      ? tags.map((tag, i) => {
+          const c = CHIP_COLORS[i % CHIP_COLORS.length];
+          return `<a href="${escHtml(tag.url)}" target="_blank" rel="noopener"
+                     style="background:${c.bg};border:1px solid ${c.border};color:${c.text}"
+                     class="px-3 py-1 rounded-full font-label-sm text-label-sm uppercase hover:opacity-70 transition-opacity">
+                     ${escHtml(tag.name)}
+                   </a>`;
+        }).join('')
+      : '<p class="text-sm text-on-surface-variant">No tags found for this track.</p>';
+
+    // Stats
+    document.getElementById('metric-listeners').textContent = fmtNum(lfm.listeners);
+    document.getElementById('metric-scrobbles').textContent = fmtNum(lfm.playcount);
+    document.getElementById('metric-top-tag').textContent   = tags[0]?.name || '—';
+
+    // Estimated features from tags
+    const features = tagsToFeatures(tags);
+
+    // Radar chart
+    if (_radarChart) _radarChart.destroy();
+    _radarChart = new Chart(document.getElementById('radar-chart').getContext('2d'), {
+      type: 'radar',
+      data: {
+        labels: ['Energy', 'Dance', 'Valence', 'Acoustic', 'Instru.', 'Liveness', 'Speech'],
+        datasets: [{
+          data: [
+            features.energy, features.danceability, features.valence,
+            features.acousticness, features.instrumentalness, features.liveness, features.speechiness,
+          ],
+          backgroundColor: 'rgba(42, 229, 0, 0.07)',
+          borderColor: '#2ae500',
+          borderWidth: 2,
+          pointBackgroundColor: '#2ae500',
+          pointBorderColor: '#131313',
+          pointRadius: 4,
+          pointHoverRadius: 6,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            min: 0, max: 1,
+            grid:        { color: '#353534' },
+            angleLines:  { color: '#3a494b' },
+            pointLabels: { color: '#b9cacb', font: { size: 11, family: 'Geist, sans-serif' } },
+            ticks:       { display: false, backdropColor: 'transparent' },
+          },
+        },
+        plugins: { legend: { display: false } },
+      },
+    });
+
+    // Feature bars
+    const BARS = [
+      { label: 'Energy',          value: features.energy,           color: '#00f2ff' },
+      { label: 'Danceability',    value: features.danceability,     color: '#2ae500' },
+      { label: 'Valence',         value: features.valence,          color: '#ffabf3' },
+      { label: 'Acousticness',    value: features.acousticness,     color: '#74f5ff' },
+      { label: 'Instrumentalness',value: features.instrumentalness, color: '#79ff5b' },
+      { label: 'Liveness',        value: features.liveness,         color: '#b9cacb' },
+      { label: 'Speechiness',     value: features.speechiness,      color: '#ffd7f5' },
+    ];
+    document.getElementById('feature-bars').innerHTML = BARS.map(b => `
+      <div class="flex items-center gap-3">
+        <span class="font-label-sm text-label-sm text-on-surface-variant w-32 shrink-0 uppercase">${b.label}</span>
+        <div class="flex-1 h-[6px] bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full rounded-full feature-bar-fill"
+               style="width:${(b.value * 100).toFixed(1)}%;background:${b.color};box-shadow:0 0 8px ${b.color}55"></div>
+        </div>
+        <span class="font-mono text-xs text-on-surface-variant w-7 text-right">${Math.round(b.value * 100)}</span>
+      </div>
+    `).join('');
+
+    // Wiki summary
+    const summary = cleanWiki(lfm.wiki?.summary || '');
+    const wikiEl  = document.getElementById('wiki-section');
+    if (summary) {
+      document.getElementById('wiki-text').textContent = summary;
+      wikiEl.classList.remove('hidden');
+    } else {
+      wikiEl.classList.add('hidden');
+    }
+  }
+
+  // ── Render: Search Results ────────────────────────────────────────
+  function renderSearchResults(tracks) {
+    const el = document.getElementById('search-results');
+    if (!tracks.length) {
+      el.innerHTML = '<p class="p-4 text-sm text-on-surface-variant text-center">No results found.</p>';
+    } else {
+      el.innerHTML = tracks.map(t => `
+        <div class="flex items-center gap-3 p-3 hover:bg-surface-container-high cursor-pointer transition-colors group"
+             data-id="${escHtml(t.id)}"
+             data-artist="${escHtml(t.artists[0]?.name || '')}"
+             data-track="${escHtml(t.name)}">
+          <img src="${t.album?.images[2]?.url || ''}" alt="" class="w-10 h-10 rounded object-cover shrink-0 bg-surface-container-high"/>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-on-surface truncate group-hover:text-primary-fixed-dim transition-colors">${escHtml(t.name)}</p>
+            <p class="text-xs text-on-surface-variant truncate">${escHtml(t.artists[0]?.name)} · ${escHtml(t.album?.name)}</p>
+          </div>
+          <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary-fixed-dim transition-colors" style="font-size:20px;">chevron_right</span>
+        </div>
+      `).join('');
+
+      el.querySelectorAll('[data-id]').forEach(row => {
+        row.addEventListener('click', () => selectTrack(
+          row.dataset.id,
+          row.dataset.artist,
+          row.dataset.track
+        ));
+      });
+    }
+    el.classList.remove('hidden');
+  }
+
+  // ── Select Track ──────────────────────────────────────────────────
+  async function selectTrack(trackId, artistName, trackName) {
+    document.getElementById('search-results').classList.add('hidden');
+    setState('loading');
+    try {
+      // Parallel: Spotify track details + Last.fm tags/stats
+      const [spotifyResult, lfm] = await Promise.all([
+        spotifyGet('/tracks/' + trackId),
+        lfmTrackInfo(artistName, trackName),
+      ]);
+      if (!spotifyResult.ok) throw new Error('Could not load track data from Spotify.');
+
+      renderTrackHeader(spotifyResult.data);
+      renderLfm(lfm);
+      setState('analysis');
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    Chart.defaults.color       = '#849495';
+    Chart.defaults.font.family = 'Inter, sans-serif';
+
+
+
+    document.getElementById('search-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const query = document.getElementById('search-input').value.trim();
+      if (!query) return;
+
+
+
+      setState('loading');
+      try {
+        const tracks = await searchTracks(query);
+        renderSearchResults(tracks);
+        setState('idle');
+      } catch (err) {
+        showError(err.message);
+      }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#search-form') && !e.target.closest('#search-results')) {
+        document.getElementById('search-results').classList.add('hidden');
+      }
+    });
+  });
+
+  // ── Helpers ───────────────────────────────────────────────────────
+  function formatMs(ms) {
+    const s = Math.floor(ms / 1000);
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  function fmtNum(n) {
+    if (!n) return '—';
+    const num = parseInt(n, 10);
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M';
+    if (num >= 1_000)     return (num / 1_000).toFixed(0) + 'K';
+    return String(num);
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function cleanWiki(html) {
+    return html
+      .replace(/<a [^>]*>Read more on Last\.fm<\/a>/gi, '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+      .trim();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>External Systems - MUSAIX ENGINE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#690005",
+                    "on-tertiary-fixed": "#380038",
+                    "on-primary-fixed": "#002022",
+                    "on-primary-fixed-variant": "#004f54",
+                    "tertiary": "#fff4f9",
+                    "on-tertiary-fixed-variant": "#810081",
+                    "error-container": "#93000a",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-primary": "#00363a",
+                    "on-tertiary-container": "#ab00aa",
+                    "on-background": "#e5e2e1",
+                    "background": "#131313",
+                    "inverse-surface": "#e5e2e1",
+                    "surface-container-highest": "#353534",
+                    "surface-bright": "#3a3939",
+                    "on-surface": "#e5e2e1",
+                    "inverse-on-surface": "#313030",
+                    "surface": "#131313",
+                    "tertiary-container": "#ffcbf4",
+                    "on-secondary": "#053900",
+                    "error": "#ffb4ab",
+                    "on-secondary-container": "#0f6d00",
+                    "inverse-primary": "#00696f",
+                    "secondary": "#d7ffc5",
+                    "surface-container": "#201f1f",
+                    "primary-container": "#00f2ff",
+                    "outline-variant": "#3a494b",
+                    "primary": "#e1fdff",
+                    "surface-dim": "#131313",
+                    "primary-fixed": "#74f5ff",
+                    "secondary-fixed": "#79ff5b",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#2ae500",
+                    "on-surface-variant": "#b9cacb",
+                    "surface-tint": "#00dbe7",
+                    "outline": "#849495",
+                    "primary-fixed-dim": "#00dbe7",
+                    "secondary-container": "#2ff801",
+                    "surface-container-low": "#1c1b1b",
+                    "tertiary-fixed-dim": "#ffabf3",
+                    "on-tertiary": "#5b005b",
+                    "on-primary-container": "#006a71",
+                    "surface-container-high": "#2a2a2a",
+                    "tertiary-fixed": "#ffd7f5",
+                    "on-secondary-fixed": "#022100",
+                    "on-secondary-fixed-variant": "#095300",
+                    "surface-variant": "#353534"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "16px",
+                    "margin-desktop": "40px",
+                    "unit": "4px",
+                    "margin-mobile": "16px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Geist"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "800"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-glow {
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+        .led-segment {
+            width: 4px;
+            height: 12px;
+            margin-right: 1px;
+            background-color: #333;
+            transition: background-color 0.1s ease, box-shadow 0.1s ease;
+        }
+        .led-segment.active {
+            background-color: #00F2FF;
+            box-shadow: 0 0 8px #00F2FF;
+        }
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid #333;
+        }
+        .tab-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes rhythmic-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .pulse-soft {
+            animation: rhythmic-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .snappy-toggle {
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .snappy-toggle:active {
+            transform: scale(0.92);
+        }
+        
+        .icon-hover-bounce:hover {
+            animation: icon-bounce 0.4s cubic-bezier(0.36, 0, 0.66, -0.56) alternate 1;
+        }
+        @keyframes icon-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-2px); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer active:scale-90 transition-transform">menu</span>
+<h1 class="font-headline-md text-headline-md font-bold tracking-widest text-primary-fixed-dim">MUSAIX ENGINE</h1>
+</div>
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer active:scale-90 transition-transform">help_outline</span>
+</header>
+<main class="pt-20 px-margin-mobile max-w-md mx-auto">
+<!-- Screen Title -->
+<div class="mt-4 mb-6">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary-fixed-dim">External Systems</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1 uppercase tracking-wider">Interface Management Hub</p>
+</div>
+<!-- System Tabs -->
+<div class="flex p-1 bg-surface-container rounded-xl border border-outline-variant mb-6" id="main-tabs">
+<button class="flex-1 py-2 font-label-sm text-label-sm rounded-lg tab-transition bg-primary-container/10 text-primary-fixed-dim ring-1 ring-primary-container/30 snappy-toggle" id="tab-ableton" onclick="switchTab('ableton')">
+            Ableton Live
+        </button>
+<button class="flex-1 py-2 font-label-sm text-label-sm rounded-lg tab-transition text-on-surface-variant opacity-60 snappy-toggle" id="tab-suno" onclick="switchTab('suno')">
+            Suno Remix
+        </button>
+</div>
+<!-- Ableton Content Section -->
+<div class="space-y-4" id="section-ableton">
+<!-- ASIO Connectivity Status -->
+<div class="glass-panel p-4 rounded-xl flex items-center justify-between group cursor-default">
+<div class="flex items-center gap-3">
+<div class="relative flex items-center justify-center">
+<div class="absolute w-3 h-3 bg-secondary-fixed-dim rounded-full animate-ping opacity-75"></div>
+<div class="relative w-3 h-3 bg-secondary-fixed-dim rounded-full pulse-soft"></div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface">ASIO Connectivity</p>
+<p class="text-[10px] text-secondary-fixed-dim font-bold uppercase tracking-tighter">Active • 44.1kHz • 128 spls</p>
+</div>
+</div>
+<div class="flex gap-0.5">
+<div class="led-segment active"></div>
+<div class="led-segment active"></div>
+<div class="led-segment active"></div>
+<div class="led-segment active"></div>
+<div class="led-segment"></div>
+</div>
+</div>
+<!-- Sovereign Local Setup -->
+<div class="glass-panel rounded-xl overflow-hidden">
+<div class="p-4 border-b border-outline-variant flex items-center justify-between">
+<h3 class="font-headline-md text-[18px] text-primary">Sovereign Local Setup</h3>
+<span class="material-symbols-outlined text-on-surface-variant text-sm icon-hover-bounce">settings_ethernet</span>
+</div>
+<div class="p-4 space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm opacity-70">Direct DAW Link</span>
+<button class="w-10 h-5 bg-primary-container/20 rounded-full relative border border-primary-container/40 snappy-toggle" onclick="this.classList.toggle('bg-primary-container/40')">
+<div class="absolute right-1 top-1 w-3 h-3 bg-primary-fixed-dim rounded-full transition-all duration-150 ease-out"></div>
+</button>
+</div>
+<div class="h-32 rounded-lg bg-surface-container-low border border-outline-variant relative overflow-hidden group">
+<div class="absolute inset-0 opacity-40"></div>
+<div class="absolute inset-0 flex items-center justify-center bg-black/40">
+<button class="px-4 py-2 bg-background border border-primary-fixed-dim text-primary-fixed-dim font-label-sm text-label-sm rounded uppercase tracking-widest hover:bg-primary-container/10 transition-all snappy-toggle">Configure Port</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Max for Live Devices -->
+<div class="glass-panel p-4 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary-fixed-dim icon-hover-bounce">extension</span>
+<h3 class="font-headline-md text-[18px] text-on-surface">Max for Live Devices</h3>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container-high p-3 border border-outline-variant rounded-lg group hover:border-primary-fixed-dim transition-colors cursor-pointer active:scale-[0.98]">
+<p class="font-label-sm text-[11px] text-on-surface-variant mb-1">M4L.01</p>
+<p class="text-sm font-bold text-primary truncate">Neural Granular</p>
+</div>
+<div class="bg-surface-container-high p-3 border border-outline-variant rounded-lg group hover:border-primary-fixed-dim transition-colors cursor-pointer active:scale-[0.98]">
+<p class="font-label-sm text-[11px] text-on-surface-variant mb-1">M4L.02</p>
+<p class="text-sm font-bold text-primary truncate">Spatial Jitter</p>
+</div>
+</div>
+</div>
+<!-- ASIO/MIDI Workflows -->
+<div class="glass-panel p-4 rounded-xl border-l-4 border-primary-fixed-dim group hover:bg-surface-container/50 transition-colors">
+<h3 class="font-label-sm text-label-sm text-primary-fixed-dim mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm icon-hover-bounce">bolt</span>
+                ASIO/MIDI Workflows
+            </h3>
+<p class="text-sm text-on-surface-variant mb-3">Bridge low-latency MIDI triggers directly to Ableton Live track instances.</p>
+<div class="flex items-center gap-4">
+<div class="flex-1 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-2/3 h-full bg-gradient-to-r from-primary-fixed-dim to-secondary-fixed-dim animate-[pulse_3s_ease-in-out_infinite]"></div>
+</div>
+<span class="font-label-sm text-[10px] text-primary-fixed-dim">SYNCED</span>
+</div>
+</div>
+</div>
+<!-- Suno Remix Section (Hidden by default) -->
+<div class="space-y-4 hidden" id="section-suno">
+<!-- Genre Presets -->
+<div class="space-y-3">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-1">Genre Presets</label>
+<div class="grid grid-cols-2 gap-3">
+<button class="bg-surface-container-high border border-outline-variant p-4 rounded-xl text-left hover:border-primary-fixed-dim active:scale-95 transition-all group snappy-toggle">
+<span class="material-symbols-outlined text-primary-fixed-dim mb-2 group-hover:fill-current icon-hover-bounce" style="font-variation-settings: 'FILL' 1;">album</span>
+<p class="font-bold text-on-surface">Trap</p>
+<p class="text-[10px] text-on-surface-variant">808 &amp; Dark Bass</p>
+</button>
+<button class="bg-surface-container-high border border-outline-variant p-4 rounded-xl text-left hover:border-primary-fixed-dim active:scale-95 transition-all group snappy-toggle">
+<span class="material-symbols-outlined text-primary-fixed-dim mb-2 icon-hover-bounce">grid_view</span>
+<p class="font-bold text-on-surface">Drill</p>
+<p class="text-[10px] text-on-surface-variant">Syncopated Perc</p>
+</button>
+<button class="bg-surface-container-high border border-outline-variant p-4 rounded-xl text-left hover:border-primary-fixed-dim active:scale-95 transition-all group snappy-toggle">
+<span class="material-symbols-outlined text-primary-fixed-dim mb-2 icon-hover-bounce">mic_external_on</span>
+<p class="font-bold text-on-surface">Rap</p>
+<p class="text-[10px] text-on-surface-variant">Classic Flow</p>
+</button>
+<button class="bg-surface-container-high border border-outline-variant p-4 rounded-xl text-left hover:border-primary-fixed-dim active:scale-95 transition-all group snappy-toggle">
+<span class="material-symbols-outlined text-primary-fixed-dim mb-2 icon-hover-bounce">favorite</span>
+<p class="font-bold text-on-surface">Emotional Anthems</p>
+<p class="text-[10px] text-on-surface-variant">Cinematic Melodies</p>
+</button>
+</div>
+</div>
+<!-- Custom Instrumental Prompts -->
+<div class="glass-panel p-5 rounded-xl">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-label-sm text-label-sm text-on-surface uppercase">Custom Instrumental Prompts</h3>
+<div class="px-2 py-0.5 bg-primary-container/10 border border-primary-container/30 rounded text-[10px] text-primary-fixed-dim font-bold">GPT-4 INJECTED</div>
+</div>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-sm focus:border-primary-fixed-dim focus:ring-0 placeholder:text-on-surface-variant/40 resize-none" placeholder="Enter prompt characteristics (e.g., 'Heavy analog synthesizers with a lo-fi tape saturation warp and ethereal choir pads...')" rows="4"></textarea>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-3 bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-all shadow-[0_0_15px_rgba(0,242,255,0.3)] snappy-toggle">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                    Generate Base
+                </button>
+</div>
+</div>
+<!-- Recent Generations -->
+<div class="p-1">
+<h4 class="font-label-sm text-[11px] text-on-surface-variant uppercase mb-3">Live Suno Streams</h4>
+<div class="space-y-2">
+<div class="flex items-center gap-3 p-3 bg-surface-container rounded-lg border border-outline-variant/30 hover:border-primary-fixed-dim/50 transition-colors group">
+<div class="w-10 h-10 rounded bg-black/40 flex items-center justify-center cursor-pointer snappy-toggle">
+<span class="material-symbols-outlined text-primary-fixed-dim">play_arrow</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold text-primary truncate">Melodic_Hyperpop_Refrain.wav</p>
+<p class="text-[10px] text-on-surface-variant">145 BPM • Generated 2m ago</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">more_vert</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe h-20 bg-surface-container-lowest border-t border-outline-variant">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all cursor-pointer active:scale-90">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Overview</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all cursor-pointer active:scale-90">
+<span class="material-symbols-outlined">memory</span>
+<span class="font-label-sm text-label-sm">Engine</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all cursor-pointer active:scale-90">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="font-label-sm text-label-sm">Pipeline</span>
+</div>
+<!-- External is Active -->
+<div class="flex flex-col items-center justify-center bg-primary-container/10 text-primary-fixed-dim rounded-xl px-3 py-1 ring-1 ring-primary-container/30 active-glow scale-110 transition-transform duration-300 ease-out cursor-default">
+<span class="material-symbols-outlined pulse-soft">sync_alt</span>
+<span class="font-label-sm text-label-sm">External</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:opacity-100 transition-all cursor-pointer active:scale-90">
+<span class="material-symbols-outlined">construction</span>
+<span class="font-label-sm text-label-sm">Build</span>
+</div>
+</nav>
+<script>
+    function switchTab(target) {
+        const abletonBtn = document.getElementById('tab-ableton');
+        const sunoBtn = document.getElementById('tab-suno');
+        const abletonSec = document.getElementById('section-ableton');
+        const sunoSec = document.getElementById('section-suno');
+
+        const activeClasses = ['bg-primary-container/10', 'text-primary-fixed-dim', 'ring-1', 'ring-primary-container/30'];
+        const inactiveClasses = ['text-on-surface-variant', 'opacity-60'];
+
+        if (target === 'ableton') {
+            // UI Update
+            abletonBtn.classList.remove(...inactiveClasses);
+            abletonBtn.classList.add(...activeClasses);
+            sunoBtn.classList.remove(...activeClasses);
+            sunoBtn.classList.add(...inactiveClasses);
+            
+            // Content Switch
+            abletonSec.classList.remove('hidden');
+            sunoSec.classList.add('hidden');
+        } else {
+            // UI Update
+            sunoBtn.classList.remove(...inactiveClasses);
+            sunoBtn.classList.add(...activeClasses);
+            abletonBtn.classList.remove(...activeClasses);
+            abletonBtn.classList.add(...inactiveClasses);
+            
+            // Content Switch
+            sunoSec.classList.remove('hidden');
+            abletonSec.classList.add('hidden');
+        }
+    }
+
+    // Micro-interaction for LED segments
+    setInterval(() => {
+        const segments = document.querySelectorAll('.led-segment');
+        const target = segments[Math.floor(Math.random() * segments.length)];
+        if (target) {
+            target.classList.toggle('active');
+            setTimeout(() => target.classList.add('active'), 100);
+        }
+    }, 1200);
+</script>
+</body></html>
